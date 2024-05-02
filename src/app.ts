@@ -1,8 +1,7 @@
 import {
   type APIGatewayEvent,
   type APIGatewayProxyHandler,
-  type APIGatewayProxyResult,
-  type Context
+  type APIGatewayProxyResult
 } from 'aws-lambda'
 import { LambdaClient, InvokeCommand, InvokeCommandInput } from '@aws-sdk/client-lambda'
 import dotenv from 'dotenv'
@@ -13,7 +12,7 @@ const { LAMBDA_FACTORIAL_FUNCTION_NAME: factorialFunctionName } = process.env
 
 if (factorialFunctionName == null) throw new Error('LAMBDA_FACTORIAL_FUNCTION_NAME is not defined')
 
-export const lambdaHandler: APIGatewayProxyHandler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+export const lambdaHandler: APIGatewayProxyHandler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
   // クエリパラメタからnを取得
   const nStr = event.queryStringParameters?.n
   if (nStr == null) {
