@@ -16,13 +16,36 @@ Globals:
     TracingEnabled: true
 
 Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AllowLambdaToInvokeLambda
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: "*"
+
   FactorialFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub "${AWS::StackName}-factorial"
       PackageType: Image
+      ImageConfig:
+        Command: [ "app.lambdaHandler" ]
       Architectures:
         - x86_64
+      Role: !GetAtt LambdaRole.Arn
       Events:
         Factorial:
           Type: Api
@@ -53,9 +76,6 @@ Outputs:
   FactorialApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/factorial/"
-  FactorialFunction:
-    Description: Hello World Lambda Function ARN
-    Value: !GetAtt FactorialFunction.Arn
-  FactorialFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
-    Value: !GetAtt FactorialFunctionRole.Arn
+  FactorialFunctionName:
+    Description: "Factorial Lambda Function Name"
+    Value: !Ref FactorialFunction
