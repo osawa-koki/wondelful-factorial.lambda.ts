@@ -13,7 +13,6 @@ const { LAMBDA_FACTORIAL_FUNCTION_NAME: factorialFunctionName } = process.env
 if (factorialFunctionName == null) throw new Error('LAMBDA_FACTORIAL_FUNCTION_NAME is not defined')
 
 export const lambdaHandler: APIGatewayProxyHandler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
-  // クエリパラメタからnを取得
   const nStr = event.queryStringParameters?.n
   if (nStr == null) {
     return {
