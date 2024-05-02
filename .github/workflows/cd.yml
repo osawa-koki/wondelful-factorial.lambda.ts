@@ -16,6 +16,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+      - name: Create dotenv
+        run: |
+          echo "LAMBDA_FACTORIAL_FUNCTION_NAME=$(aws cloudformation describe-stacks --stack-name ${{ secrets.STACK_NAME }} --query 'Stacks[].Outputs[?OutputKey==`FactorialFunctionName`].OutputValue' --output text)" >> ./src/.env
       - name: Build Lambda
         run: sam build --use-container
       - name: Deploy Lambda
